@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AKROO BM - Modern Budget & Personal Finance Manager</title>
+  <meta name="description" content="A sleek, intelligent personal finance and budget manager with interactive analytics, category limits, and smart spending insights.">
+
+  <!-- Progressive Web App Manifest & Mobile Meta -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#6366f1">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+
+  <!-- Google Fonts: Outfit & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <div class="app-container">
+
+    <!-- Top App Navigation / Header -->
+    <header class="app-header">
+      <div class="brand-section">
+        <div class="brand-logo" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4" />
+            <path d="M3 5v14a2 2 0 0 0 2 2h16v-5" />
+            <path d="M18 12a2 2 0 0 0 0 4h4v-4Z" />
+          </svg>
+        </div>
+        <div>
+          <h1 class="brand-title">AKROO BM</h1>
+          <div class="brand-subtitle">Smart Personal Finance</div>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <!-- Month Navigator -->
+        <div class="month-selector-wrapper" aria-label="Month Navigation">
+          <button id="prevMonthBtn" class="nav-month-btn" title="Previous Month" aria-label="Previous Month">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+          </button>
+          <span id="currentMonthDisplay" class="current-month-display">September 2026</span>
+          <button id="nextMonthBtn" class="nav-month-btn" title="Next Month" aria-label="Next Month">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
+        </div>
+
+        <!-- Currency Selector -->
+        <select id="currencySelect" class="styled-select" aria-label="Select Currency">
+          <option value="INR" selected>INR (₹)</option>
+          <option value="USD">USD ($)</option>
+          <option value="EUR">EUR (€)</option>
+          <option value="GBP">GBP (£)</option>
+          <option value="JPY">JPY (¥)</option>
+          <option value="CAD">CAD (CA$)</option>
+          <option value="AUD">AUD (AU$)</option>
+        </select>
+
+        <!-- Theme Toggle -->
+        <button id="themeToggleBtn" class="btn-icon" title="Toggle Theme" aria-label="Toggle Dark/Light Theme">
+          <span id="themeIcon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>
+            </svg>
+          </span>
+        </button>
+
+        <!-- Data Tools / Modal trigger -->
+        <button id="openDataModalBtn" class="btn-icon" onclick="window.app.openModal('dataModal')" title="Data Backup & Export" aria-label="Data Backup and Export">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+        </button>
+
+        <!-- Android App Download / Install trigger -->
+        <button id="openAndroidModalBtn" class="btn btn-secondary btn-sm" style="display:inline-flex; align-items:center; gap:0.4rem; background: rgba(16, 185, 129, 0.12); color: #34d399; border-color: rgba(16, 185, 129, 0.25);" title="Download / Install on Android Phone">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
+          <span>Android App</span>
+        </button>
+
+        <!-- Primary Add Transaction -->
+        <button id="openAddTxBtn" class="btn btn-primary" aria-label="Add Transaction">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <span>New Transaction</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Top Summary Metrics Grid -->
+    <section class="metrics-grid" aria-label="Financial Summary">
+      <!-- Balance Card -->
+      <div class="metric-card balance">
+        <div class="metric-header">
+          <span class="metric-label">Net Monthly Balance</span>
+          <div class="metric-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+        </div>
+        <div id="metricBalance" class="metric-value">$0.00</div>
+        <div class="metric-subtext">
+          <span id="metricSavingsBadge" class="badge-tag badge-income">+ Positive Pacing</span>
+          <span>(Income - Expenses)</span>
+        </div>
+      </div>
+
+      <!-- Income Card -->
+      <div class="metric-card income">
+        <div class="metric-header">
+          <span class="metric-label">Total Monthly Income</span>
+          <div class="metric-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+          </div>
+        </div>
+        <div id="metricIncome" class="metric-value">$0.00</div>
+        <div class="metric-subtext">
+          <span class="badge-tag badge-income">Received</span>
+          <span>Earned this month</span>
+        </div>
+      </div>
+
+      <!-- Expense Card -->
+      <div class="metric-card expense">
+        <div class="metric-header">
+          <span class="metric-label">Total Monthly Expenses</span>
+          <div class="metric-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+          </div>
+        </div>
+        <div id="metricExpense" class="metric-value">$0.00</div>
+        <div class="metric-subtext">
+          <span class="badge-tag badge-expense">Outflows</span>
+          <span>Total spent</span>
+        </div>
+      </div>
+
+      <!-- Savings Rate Card -->
+      <div class="metric-card savings">
+        <div class="metric-header">
+          <span class="metric-label">Savings Rate</span>
+          <div class="metric-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+          </div>
+        </div>
+        <div id="metricSavingsRate" class="metric-value">0%</div>
+        <div class="metric-subtext">
+          <span class="badge-tag badge-info">Target: &gt;20%</span>
+          <span>Portion of income saved</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quick Action Presets -->
+    <div class="quick-action-banner">
+      <div class="quick-presets-group">
+        <span class="quick-label">⚡ Quick Add:</span>
+        <button class="preset-chip" data-preset="coffee">☕ Coffee</button>
+        <button class="preset-chip" data-preset="lunch">🥗 Lunch</button>
+        <button class="preset-chip" data-preset="groceries">🛒 Groceries</button>
+        <button class="preset-chip" data-preset="fuel">⛽ Gas / Fuel</button>
+        <button class="preset-chip" data-preset="salary">💼 Salary</button>
+      </div>
+      <div style="font-size: 0.8rem; color: var(--text-muted);">
+        Tip: Press <kbd style="background:var(--bg-pill); padding:0.1rem 0.35rem; border-radius:4px; border:1px solid var(--border-subtle);">N</kbd> anywhere to add transaction
+      </div>
+    </div>
+
+    <!-- Main Two-Column Dashboard Layout -->
+    <main class="dashboard-grid">
+
+      <!-- Left Column: Budgets & Analytics -->
+      <div class="dash-left-col">
+
+        <!-- Monthly Budget Health Card -->
+        <div class="card-section">
+          <div class="section-header">
+            <h2 class="section-title">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              Monthly Budget Health
+            </h2>
+            <button id="openBudgetModalBtn" class="btn btn-secondary btn-sm" aria-label="Manage Budgets">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+              <span>Manage Budgets</span>
+            </button>
+          </div>
+
+          <div class="budget-health-bar">
+            <div class="health-meter-labels">
+              <span id="healthStatusText">Calculating status...</span>
+              <strong id="overallHealthPercent">0%</strong>
+            </div>
+            <div class="progress-track" style="height: 12px;">
+              <div id="overallHealthFill" class="progress-fill progress-safe" style="width: 0%;"></div>
+            </div>
+          </div>
+
+          <div class="health-stats-row">
+            <span style="color: var(--text-secondary);">Spending Pacing:</span>
+            <span id="healthRemainingVal" style="font-family: var(--font-mono); font-weight: 600; color: var(--text-primary);">$0 left of $0</span>
+          </div>
+        </div>
+
+        <!-- Category Budgets List -->
+        <div class="card-section">
+          <div class="section-header">
+            <h2 class="section-title">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+              Category Spending Limits
+            </h2>
+          </div>
+          <div id="categoryBudgetList" class="category-budget-list">
+            <!-- Dynamic Category Progress items rendered here -->
+          </div>
+        </div>
+
+        <!-- Spending Breakdown Donut Chart -->
+        <div class="card-section">
+          <div class="section-header">
+            <h2 class="section-title">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24"/><path d="m14.83 9.17 4.24-4.24"/><path d="m14.83 14.83 4.24 4.24"/><path d="m9.17 14.83-4.24 4.24"/></svg>
+              Expense Breakdown by Category
+            </h2>
+          </div>
+
+          <div class="chart-card-content">
+            <div id="donutChartContainer" class="chart-svg-container">
+              <!-- SVG Donut Chart rendered here -->
+            </div>
+            <div id="chartLegendGrid" class="chart-legend-grid">
+              <!-- Legend items rendered here -->
+            </div>
+          </div>
+
+          <!-- Smart Insight Callout -->
+          <div class="insight-box">
+            <div class="insight-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            </div>
+            <div id="smartInsightText" class="insight-text">
+              Loading financial insights...
+            </div>
+          </div>
+        </div>
+
+        <!-- 6-Month Cash Flow Trend Chart -->
+        <div class="card-section">
+          <div class="section-header">
+            <h2 class="section-title">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+              6-Month Cash Flow Trend
+            </h2>
+            <div style="display:flex; align-items:center; gap:0.75rem; font-size:0.75rem;">
+              <span style="display:flex; align-items:center; gap:0.25rem;"><span style="width:8px; height:8px; border-radius:2px; background:var(--income);"></span> Income</span>
+              <span style="display:flex; align-items:center; gap:0.25rem;"><span style="width:8px; height:8px; border-radius:2px; background:var(--expense);"></span> Expense</span>
+            </div>
+          </div>
+          <div id="cashflowChartContainer" style="width:100%; height:180px;">
+            <!-- SVG Cashflow chart rendered here -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right Column: Transaction Feed & Management -->
+      <div class="dash-right-col">
+        <div class="card-section" style="height: 100%;">
+          <div class="section-header">
+            <h2 class="section-title">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+              Transactions Ledger
+            </h2>
+          </div>
+
+          <!-- Filter & Search Controls -->
+          <div class="filter-bar">
+            <!-- Search bar -->
+            <div class="search-input-wrapper">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" id="txSearchInput" class="search-input" placeholder="Search merchant, notes...">
+            </div>
+
+            <!-- Type Tabs -->
+            <div class="type-filter-tabs">
+              <button class="filter-tab active" data-type="all">All</button>
+              <button class="filter-tab" data-type="expense">Expenses</button>
+              <button class="filter-tab" data-type="income">Income</button>
+            </div>
+
+            <!-- Category Filter -->
+            <select id="filterCategory" class="styled-select" style="min-width: 150px;" aria-label="Filter Category">
+              <option value="all">All Categories</option>
+            </select>
+          </div>
+
+          <!-- Transaction List -->
+          <div id="transactionsList" class="transactions-list">
+            <!-- Dynamic Transaction Cards rendered here -->
+          </div>
+
+        </div>
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- ================= MODALS ================= -->
+
+  <!-- Add / Edit Transaction Modal -->
+  <div id="txModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modalTxTitle">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="modalTxTitle" class="modal-title">Add Transaction</h3>
+        <button class="btn-icon modal-close-btn" aria-label="Close modal">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <form id="txForm">
+        <div class="modal-body">
+          <!-- Type Toggle (Expense / Income) -->
+          <div class="form-group">
+            <label class="form-label">Transaction Type</label>
+            <input type="hidden" id="txType" value="expense">
+            <div class="type-toggle-group">
+              <button type="button" id="typeExpenseBtn" class="type-toggle-btn active expense">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+                Expense
+              </button>
+              <button type="button" id="typeIncomeBtn" class="type-toggle-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+                Income
+              </button>
+            </div>
+          </div>
+
+          <!-- Description / Title -->
+          <div class="form-group">
+            <label for="txTitle" class="form-label">Description / Merchant</label>
+            <input type="text" id="txTitle" class="form-control" placeholder="e.g. Whole Foods, Monthly Rent, Salary" required>
+          </div>
+
+          <!-- Amount & Date Row -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="txAmount" class="form-label">Amount</label>
+              <input type="number" id="txAmount" class="form-control" placeholder="0.00" step="0.01" min="0.01" required>
+            </div>
+            <div class="form-group">
+              <label for="txDate" class="form-label">Date</label>
+              <input type="date" id="txDate" class="form-control" required>
+            </div>
+          </div>
+
+          <!-- Category & Payment Method Row -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="txCategory" class="form-label">Category</label>
+              <select id="txCategory" class="form-control styled-select">
+                <!-- Populated by JS -->
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="txPayment" class="form-label">Payment Method</label>
+              <select id="txPayment" class="form-control styled-select">
+                <option value="Credit Card">Credit Card</option>
+                <option value="Debit Card">Debit Card</option>
+                <option value="Bank Transfer">Bank Transfer</option>
+                <option value="Cash">Cash</option>
+                <option value="Digital Wallet">Digital Wallet (Apple/Google Pay)</option>
+                <option value="UPI">UPI</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Optional Notes -->
+          <div class="form-group" style="margin-bottom: 0;">
+            <label for="txNotes" class="form-label">Notes (Optional)</label>
+            <input type="text" id="txNotes" class="form-control" placeholder="Additional details, receipt ref...">
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary modal-close-btn">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Transaction</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Manage Category Budgets Modal -->
+  <div id="budgetModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modalBudgetTitle">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="modalBudgetTitle" class="modal-title">Configure Monthly Budgets</h3>
+        <button class="btn-icon modal-close-btn" aria-label="Close modal">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.25rem;">
+          Set your monthly spending ceilings per category. AKROO BM will alert you when you approach or exceed these limits.
+        </p>
+        <div id="budgetEditList">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary modal-close-btn">Cancel</button>
+        <button type="button" id="saveBudgetsBtn" class="btn btn-primary">Save Budgets</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Data Backup & Export/Import Modal -->
+  <div id="dataModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modalDataTitle">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="modalDataTitle" class="modal-title">Data Backup & Portability</h3>
+        <button class="btn-icon modal-close-btn" aria-label="Close modal">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.5rem;">
+          All your financial data is saved locally on your device in your browser. You can back it up, export to spreadsheet format, or restore from a previous JSON export at any time.
+        </p>
+
+        <div style="display:flex; flex-direction:column; gap:1rem;">
+          <!-- CSV Export -->
+          <div style="display:flex; align-items:center; justify-content:space-between; padding:0.85rem 1rem; background:var(--bg-pill); border-radius:var(--radius-md); border:1px solid var(--border-subtle);">
+            <div>
+              <div style="font-weight:600; font-size:0.9rem;">Export to Spreadsheet (CSV)</div>
+              <div style="font-size:0.75rem; color:var(--text-muted);">Download clean CSV file of all transaction records</div>
+            </div>
+            <button id="exportCsvBtn" class="btn btn-secondary btn-sm">Export CSV</button>
+          </div>
+
+          <!-- JSON Backup -->
+          <div style="display:flex; align-items:center; justify-content:space-between; padding:0.85rem 1rem; background:var(--bg-pill); border-radius:var(--radius-md); border:1px solid var(--border-subtle);">
+            <div>
+              <div style="font-weight:600; font-size:0.9rem;">Backup Everything (JSON)</div>
+              <div style="font-size:0.75rem; color:var(--text-muted);">Full snapshot including budgets, settings, and ledger</div>
+            </div>
+            <button id="exportJsonBtn" class="btn btn-secondary btn-sm">Export JSON</button>
+          </div>
+
+          <!-- JSON Restore -->
+          <div style="display:flex; align-items:center; justify-content:space-between; padding:0.85rem 1rem; background:var(--bg-pill); border-radius:var(--radius-md); border:1px solid var(--border-subtle);">
+            <div>
+              <div style="font-weight:600; font-size:0.9rem;">Restore Backup (JSON)</div>
+              <div style="font-size:0.75rem; color:var(--text-muted);">Import a previously saved AKROO BM JSON file</div>
+            </div>
+            <label class="btn btn-secondary btn-sm" style="cursor:pointer; margin-bottom:0;">
+              Import
+              <input type="file" id="importJsonInput" accept=".json" style="display:none;">
+            </label>
+          </div>
+
+          <!-- Reset Data -->
+          <div style="display:flex; align-items:center; justify-content:space-between; padding:0.85rem 1rem; background:var(--bg-pill); border-radius:var(--radius-md); border:1px solid var(--border-subtle); margin-top:0.5rem;">
+            <div>
+              <div style="font-weight:600; font-size:0.9rem; color:var(--expense);">Reset Sample Data</div>
+              <div style="font-size:0.75rem; color:var(--text-muted);">Restore default realistic sample demonstration data</div>
+            </div>
+            <button id="resetDataBtn" class="btn btn-danger btn-sm">Reset</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary modal-close-btn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Android App Download & Install Modal -->
+  <div id="androidInstallModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modalAndroidTitle">
+    <div class="modal-dialog" style="max-width: 540px;">
+      <div class="modal-header">
+        <div style="display:flex; align-items:center; gap:0.6rem;">
+          <div style="width:34px; height:34px; border-radius:8px; background:rgba(16, 185, 129, 0.15); color:#34d399; display:flex; align-items:center; justify-content:center;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
+          </div>
+          <h3 id="modalAndroidTitle" class="modal-title" style="font-size:1.15rem;">Download & Install on Android</h3>
+        </div>
+        <button class="btn-icon modal-close-btn" aria-label="Close modal">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 1.25rem; line-height: 1.5;">
+          AKROO BM is a high-performance Progressive Web App (PWA). You can install it directly onto your Android phone as a standalone app with its own home screen icon and offline support.
+        </p>
+
+        <!-- Network URL Box & QR Code -->
+        <div style="background: var(--bg-pill); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1.25rem;">
+          <div style="display:flex; align-items:center; gap:1.25rem; flex-wrap:wrap;">
+            <div style="background:#ffffff; padding:6px; border-radius:8px; display:flex; align-items:center; justify-content:center; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+              <img src="icons/qr-code.png" alt="Scan to open on mobile" width="120" height="120" style="display:block; border-radius:4px;">
+            </div>
+            <div style="flex:1; min-width:180px;">
+              <div style="font-size: 0.775rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; margin-bottom: 0.35rem;">Point your Phone Camera to Scan:</div>
+              <div style="display:flex; align-items:center; justify-content:space-between; gap:0.5rem; background: var(--bg-input); padding: 0.5rem 0.75rem; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); margin-bottom:0.4rem;">
+                <span style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--primary); font-weight: 600; word-break: break-all;">http://192.168.1.106:8080</span>
+                <button class="btn btn-secondary btn-sm" onclick="navigator.clipboard.writeText('http://192.168.1.106:8080'); window.app.showToast('Link copied to clipboard!', 'success');" title="Copy Link" style="padding:0.25rem 0.6rem; font-size:0.75rem;">
+                  Copy
+                </button>
+              </div>
+              <div style="font-size:0.75rem; color:var(--text-muted);">Make sure your phone is connected to the same Wi-Fi.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step by Step Guide -->
+        <div style="display:flex; flex-direction:column; gap:0.85rem; font-size: 0.85rem;">
+          <div style="display:flex; gap:0.75rem; align-items:flex-start;">
+            <span style="width:24px; height:24px; border-radius:50%; background:var(--primary); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.75rem; flex-shrink:0;">1</span>
+            <div>Connect your Android phone to the same <strong>Wi-Fi network</strong> as this computer.</div>
+          </div>
+          <div style="display:flex; gap:0.75rem; align-items:flex-start;">
+            <span style="width:24px; height:24px; border-radius:50%; background:var(--primary); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.75rem; flex-shrink:0;">2</span>
+            <div>Open <strong>Google Chrome</strong> on your phone and go to <code style="background:var(--bg-pill); padding:0.1rem 0.35rem; border-radius:4px; color:var(--primary);">http://192.168.1.106:8080</code>.</div>
+          </div>
+          <div style="display:flex; gap:0.75rem; align-items:flex-start;">
+            <span style="width:24px; height:24px; border-radius:50%; background:var(--primary); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.75rem; flex-shrink:0;">3</span>
+            <div>Tap the top Chrome menu <strong>(⋮)</strong> and select <strong>"Install app"</strong> or <strong>"Add to Home screen"</strong>.</div>
+          </div>
+          <div style="display:flex; gap:0.75rem; align-items:flex-start;">
+            <span style="width:24px; height:24px; border-radius:50%; background:var(--income); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.75rem; flex-shrink:0;">✓</span>
+            <div><strong>Done!</strong> The AKROO BM icon will appear on your Android home screen and launch fullscreen like a native APK.</div>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="installAppBtn" class="btn btn-primary btn-sm" style="display:none;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Install App Now
+        </button>
+        <button type="button" class="btn btn-secondary modal-close-btn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+  <!-- Application Scripts -->
+  <script src="js/storage.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

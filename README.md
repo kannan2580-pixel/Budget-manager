@@ -1,4 +1,4 @@
-# AKROO BM - Modern Budget & Personal Finance Manager 💰📊
+# AKROO BM - Modern Budget & Personal Budget Manager 💰📊
 
 A sleek, responsive personal finance and budget manager built with **Vanilla HTML5, CSS3, and JavaScript**. Designed for speed, rich glassmorphic aesthetics, zero external runtime dependencies, and full **Progressive Web App (PWA)** mobile installation.
 
